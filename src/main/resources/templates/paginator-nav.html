@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- EL PAGINADOR ES UN MENU DE NAVEGACION -->
+<nav th:fragment="paginator">
+
+	<ul>
+
+		<!-- primera pagina -->
+		<li>
+			<!-- si estamos en la primera pagina mostramos el span(sin url) --> 
+			<span th:if="${page.first}">Pag1</span> 
+			<!-- si no estamos en la primera pagina mostramos la url -->
+			<a th:if="${not page.first}" th:href="@{${page.url}(page=0)}">Pag1</a>
+		</li>
+
+		<!-- si queremos regresar a la pagina anterior -->
+		<li>
+			<span th:if="${not page.hasPrevious}">Anterior</span> 
+			<a
+				th:if="${page.hasPrevious}"
+				th:href="@{${page.url}(page=${page.paginaActual-2})}">Anterior</a>
+		</li>
+
+		<!-- cada una de las paginas, los items que calculamos segun los rangos(for de PageRender) -->
+		<li th:each="item : ${page.paginas}">
+			<span th:if="${item.actual}"
+				th:text="${item.numero}"></span> 
+			<a th:if="${not item.actual}"
+				th:href="@{${page.url}(page=${item.numero-1})}"
+				th:text="${item.numero}"></a>
+		</li>
+
+		<!-- si queremos ir a la pagina siguiente -->
+		<li><span th:if="${not page.hasNext}">Siguiente</span> <a
+			th:if="${page.hasNext}"
+			th:href="@{${page.url}(page=${page.paginaActual})}">Siguiente</a></li>
+
+		<!-- ultima pagina -->
+		<li>
+			<!-- si estamos en la ultima pagina mostramos el span(sin url) --> <span
+			th:if="${page.last}">PagFinal</span> <!-- si no estamos en la ultima pagina mostramos la url -->
+			<a th:if="${not page.last}"
+			th:href="@{${page.url}(page=${page.totalPaginas-1})}">PagFinal</a>
+		</li>
+
+	</ul>
+
+</nav>
+<body>
+
+</body>
+</html>

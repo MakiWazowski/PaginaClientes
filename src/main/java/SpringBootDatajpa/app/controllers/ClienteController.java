@@ -7,12 +7,17 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -20,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import SpringBootDatajpa.app.models.dao.IClienteDao;
 import SpringBootDatajpa.app.models.entity.Cliente;
 import SpringBootDatajpa.app.models.service.IClienteService;
+import SpringBootDatajpa.app.util.paginator.PageRender;
 
 @Controller
 @SessionAttributes("cliente")
@@ -34,9 +40,19 @@ public class ClienteController {
 	
 	//metodo para listar los clientes
 	@RequestMapping(value="/listar",method= RequestMethod.GET)
-	public String listar(Model model) {
+	public String listar(@RequestParam(name="page", defaultValue="0") int page,Model model) {
+		
+		//implementamos el paginador en listar
+		Pageable pageRequest = PageRequest.of(page,5);
+		Page<Cliente> clientes = clienteService.findAll(pageRequest);
+		
+		PageRender<Cliente> pageRender = new PageRender<>("/listar", clientes);
+		
 		model.addAttribute("titulo","Listado de clientes");
-		model.addAttribute("clientes",clienteService.findAll());
+		//sustituimos clienteService.findAll() por clientes (que tiene la paginacion)
+		model.addAttribute("clientes",clientes);
+		//añadimos el paginador a la vista
+		model.addAttribute("page", pageRender);
 		return "listar";
 	}
 	
@@ -59,7 +75,7 @@ public class ClienteController {
 		//si falla vuelve al formulario
 		if(result.hasErrors()) {
 			model.addAttribute("titulo", "Formulario de Cliente");
-			return"form";
+			return "form";
 		}
 		
 		//mensaje flash si el cliente se guarda tras ser editado o creado
