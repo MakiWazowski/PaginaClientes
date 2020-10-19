@@ -91,7 +91,5 @@ public class Cliente implements Serializable{
 		this.foto = foto;
 	}
 	
-	
-	//<property name="url" value="jdbc:h2:mem:test;MODE=Oracle;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
-	
+
 }
