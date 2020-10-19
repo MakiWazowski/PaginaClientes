@@ -50,6 +50,8 @@ public class Cliente implements Serializable{
 	@DateTimeFormat(pattern="yyyy-mm-dd")
 	private Date createAt;
 	
+	private String foto;
+	
 	//GETTERS Y SETTERS
 	
 	public Long getId() {
@@ -82,6 +84,13 @@ public class Cliente implements Serializable{
 	public void setCreateAt(Date createAt) {
 		this.createAt = createAt;
 	}
+	public String getFoto() {
+		return foto;
+	}
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+	
 	
 	//<property name="url" value="jdbc:h2:mem:test;MODE=Oracle;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
 	

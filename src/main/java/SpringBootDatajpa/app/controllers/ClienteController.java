@@ -1,6 +1,10 @@
 package SpringBootDatajpa.app.controllers;
 
+import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import SpringBootDatajpa.app.models.dao.IClienteDao;
@@ -70,12 +75,39 @@ public class ClienteController {
 	
 	//metodo para procesar datos enviados por el usuario con el submit
 	@RequestMapping(value="/form",method= RequestMethod.POST)
-	public String guardar(@Valid Cliente cliente,BindingResult result,Model model,RedirectAttributes flash,SessionStatus status) {
+	public String guardar(@Valid Cliente cliente,BindingResult result,Model model,@RequestParam("file") MultipartFile foto,RedirectAttributes flash,SessionStatus status) {
 		
 		//si falla vuelve al formulario
 		if(result.hasErrors()) {
 			model.addAttribute("titulo", "Formulario de Cliente");
 			return "form";
+		}
+		
+		//si hay foto
+		if(!foto.isEmpty()) {
+			//donde guardaremos las fotos
+			Path directorioRecursos= Paths.get("src//main//resources//static/uploads");
+			//obtenemos el string del directorio
+			String rootPath = directorioRecursos.toFile().getAbsolutePath();
+			
+			//obtenemos los bytes de la imagen 
+			
+			try {
+				byte[] bytes = foto.getBytes();
+				//obtener la ruta final con el nombre del archivo
+				Path rutaCompleta = Paths.get(rootPath + "//" + foto.getOriginalFilename());
+				//pasamos el path con los bytes -->cargamos y subimos la imagen a uploads
+				Files.write(rutaCompleta,bytes);
+				//añadimos un mensaje
+				flash.addFlashAttribute("info","Ha subido correctamente :" + foto.getOriginalFilename());
+				//pasamos la foto al cliente
+				cliente.setFoto(foto.getOriginalFilename());
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 		}
 		
 		//mensaje flash si el cliente se guarda tras ser editado o creado
