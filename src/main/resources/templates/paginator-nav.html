@@ -4,43 +4,45 @@
 <!-- EL PAGINADOR ES UN MENU DE NAVEGACION -->
 <nav th:fragment="paginator">
 
-	<ul>
+	<ul class="pagination">
 
 		<!-- primera pagina -->
-		<li>
+		<li class="page-item" th:class="${page.first? 'page-item disabled': 'page-item'}">
 			<!-- si estamos en la primera pagina mostramos el span(sin url) --> 
-			<span th:if="${page.first}">Pag1</span> 
+			<span class="page-link" th:if="${page.first}">Pag1</span> 
 			<!-- si no estamos en la primera pagina mostramos la url -->
-			<a th:if="${not page.first}" th:href="@{${page.url}(page=0)}">Pag1</a>
+			<a class="page-link" th:if="${not page.first}" th:href="@{${page.url}(page=0)}">Pag1</a>
 		</li>
 
 		<!-- si queremos regresar a la pagina anterior -->
-		<li>
-			<span th:if="${not page.hasPrevious}">Anterior</span> 
-			<a
+		<li class="page-item" th:class="${not page.hasPrevious? 'page-item disabled': 'page-item'}">
+			<span class="page-link" th:if="${not page.hasPrevious}">&laquo;</span> 
+			<a class="page-link"
 				th:if="${page.hasPrevious}"
-				th:href="@{${page.url}(page=${page.paginaActual-2})}">Anterior</a>
+				th:href="@{${page.url}(page=${page.paginaActual-2})}">&laquo;</a>
 		</li>
 
 		<!-- cada una de las paginas, los items que calculamos segun los rangos(for de PageRender) -->
-		<li th:each="item : ${page.paginas}">
-			<span th:if="${item.actual}"
+		<li class="page-item" th:each="item : ${page.paginas}" th:class="${item.actual? 'page-item active': 'page-item'}">
+			<span class="page-link" th:if="${item.actual}"
 				th:text="${item.numero}"></span> 
-			<a th:if="${not item.actual}"
+			<a class="page-link" th:if="${not item.actual}"
 				th:href="@{${page.url}(page=${item.numero-1})}"
 				th:text="${item.numero}"></a>
 		</li>
 
 		<!-- si queremos ir a la pagina siguiente -->
-		<li><span th:if="${not page.hasNext}">Siguiente</span> <a
+		<li class="page-item" th:class="${not page.hasNext? 'page-item disabled': 'page-item'}">
+			<span class="page-link" th:if="${not page.hasNext}">&raquo;</span> 
+			<a class="page-link"
 			th:if="${page.hasNext}"
-			th:href="@{${page.url}(page=${page.paginaActual})}">Siguiente</a></li>
+			th:href="@{${page.url}(page=${page.paginaActual})}">&raquo;</a></li>
 
 		<!-- ultima pagina -->
-		<li>
-			<!-- si estamos en la ultima pagina mostramos el span(sin url) --> <span
-			th:if="${page.last}">PagFinal</span> <!-- si no estamos en la ultima pagina mostramos la url -->
-			<a th:if="${not page.last}"
+		<li  class="page-item" th:class="${page.last? 'page-item disabled': 'page-item'}">
+			<!-- si estamos en la ultima pagina mostramos el span(sin url) --> 
+			<span class="page-link" th:if="${page.last}">PagFinal</span> <!-- si no estamos en la ultima pagina mostramos la url -->
+			<a class="page-link" th:if="${not page.last}"
 			th:href="@{${page.url}(page=${page.totalPaginas-1})}">PagFinal</a>
 		</li>
 
