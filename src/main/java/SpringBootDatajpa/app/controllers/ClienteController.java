@@ -18,6 +18,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,6 +43,24 @@ public class ClienteController {
 	//@Qualifier("clienteDaoJPA")
 	//sustituimos la inyeccion de IClienteDao por IClienteService
 	private IClienteService clienteService;
+	
+	//metodo para mostrar la informacion del cliente
+	@GetMapping(value="/ver/{id}")
+	public String ver(@PathVariable(value="id") Long id , Map<String,Object> model, RedirectAttributes flash ) {
+		
+		//obtenemos el cliente a traves del cliente service
+		Cliente cliente = clienteService.findOne(id);
+		//si es null redirigimos
+		if(cliente == null) {
+			flash.addFlashAttribute("error","El cliente no existe en la base de datos");
+			return "redirect:/listar";
+		}
+		//si existe pasamos el cliente a la vista junto con la foto
+		model.put("cliente", cliente);
+		model.put("titulo", "Detalle cliente: " + cliente.getNombre());
+		
+		return "ver";
+	}
 	
 	//metodo para listar los clientes
 	@RequestMapping(value="/listar",method= RequestMethod.GET)
